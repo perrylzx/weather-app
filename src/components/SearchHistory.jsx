@@ -7,6 +7,8 @@ import { parseWeatherData } from '../common';
 const Search = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
 `;
 
 const CityCountry = styled.div``;
@@ -17,6 +19,7 @@ const DeleteButton = styled(DeleteOutlined)`
 
 const SearchButton = styled(SearchOutlined)`
   cursor: pointer;
+  margin: 0 5px;
 `;
 
 const SearchHistory = ({ searchHistory, setSearchHistory, setWeatherData }) => {
@@ -46,14 +49,17 @@ const SearchHistory = ({ searchHistory, setSearchHistory, setWeatherData }) => {
     <div>
       {searchHistory.map((search, index) => {
         return (
-          <Search key={index}>
-            <CityCountry>{`${index}. ${search.cityName}, ${search.countryCode}`}</CityCountry>
-            <div>
-              {moment.unix(search.time).format('HH:mm:ss A')}
-              <SearchButton onClick={() => handleSearch(search.cityName, search.countryCode)} />
-              <DeleteButton onClick={() => handleDelete(index)} />
-            </div>
-          </Search>
+          <>
+            <Search key={index}>
+              <CityCountry>{`${index + 1}. ${search.cityName}, ${search.countryCode}`}</CityCountry>
+              <div>
+                {moment.unix(search.time).format('HH:mm:ss A')}
+                <SearchButton onClick={() => handleSearch(search.cityName, search.countryCode)} />
+                <DeleteButton onClick={() => handleDelete(index)} />
+              </div>
+            </Search>
+            <hr />
+          </>
         );
       })}
     </div>

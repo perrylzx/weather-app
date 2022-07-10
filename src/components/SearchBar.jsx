@@ -5,8 +5,28 @@ import iso from '../iso-3166-2.json';
 import PropTypes from 'prop-types';
 import { map } from 'lodash';
 import { parseWeatherData } from '../common';
+import styled from 'styled-components';
 
 const { Option } = Select;
+
+const SearchBarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const InputPrefix = styled.h3`
+  margin: 0;
+  margin-right: 10px;
+`;
+
+const SearchInput = styled(Select)`
+  margin-right: 10px;
+`;
+
+const SearchButton = styled(Button)`
+  margin-right: 10px;
+`;
 
 const SearchWeather = ({ setWeatherData, searchHistory, setSearchHistory }) => {
   const [countryCode, setCountryCode] = useState(null);
@@ -23,14 +43,16 @@ const SearchWeather = ({ setWeatherData, searchHistory, setSearchHistory }) => {
       const jsonRes = JSON.parse(e.target.response);
       const parsedWeatherData = parseWeatherData(jsonRes, cityName, countryCode);
       setWeatherData(parsedWeatherData);
-      setSearchHistory([
-        ...searchHistory,
-        {
-          cityName: parsedWeatherData.cityName,
-          countryCode: parsedWeatherData.countryCode,
-          time: parsedWeatherData.dt
-        }
-      ]);
+      if (parsedWeatherData.weatherMain) {
+        setSearchHistory([
+          ...searchHistory,
+          {
+            cityName: parsedWeatherData.cityName,
+            countryCode: parsedWeatherData.countryCode,
+            time: parsedWeatherData.dt
+          }
+        ]);
+      }
     });
     xhttp.send();
   };
@@ -41,41 +63,47 @@ const SearchWeather = ({ setWeatherData, searchHistory, setSearchHistory }) => {
   };
 
   return (
-    <div>
-      <Select
-        value={countryCode}
-        showSearch
-        onChange={(value) => {
-          setCountryCode(value);
-          setCityName(null);
-        }}
-        placeholder="Country Code">
-        {Object.keys(iso).map((countryCode) => {
-          return (
-            <Option key={countryCode} value={countryCode}>
-              {countryCode}
-            </Option>
-          );
-        })}
-      </Select>
-      {countryCode && (
-        <Select
-          value={cityName}
+    <SearchBarContainer>
+      <>
+        <InputPrefix>Country Code:</InputPrefix>
+        <SearchInput
+          value={countryCode}
           showSearch
           onChange={(value) => {
-            setCityName(value);
+            setCountryCode(value);
+            setCityName(null);
           }}
-          placeholder="City Name">
-          {map(iso[countryCode]?.divisions, (cityName) => (
-            <Option key={cityName} value={cityName}>
-              {cityName}
-            </Option>
-          ))}
-        </Select>
+          placeholder="Country">
+          {Object.keys(iso).map((countryCode) => {
+            return (
+              <Option key={countryCode} value={countryCode}>
+                {countryCode}
+              </Option>
+            );
+          })}
+        </SearchInput>
+      </>
+      {countryCode && (
+        <>
+          <InputPrefix>City Name:</InputPrefix>
+          <SearchInput
+            value={cityName}
+            showSearch
+            onChange={(value) => {
+              setCityName(value);
+            }}
+            placeholder="City">
+            {map(iso[countryCode]?.divisions, (cityName) => (
+              <Option key={cityName} value={cityName}>
+                {cityName}
+              </Option>
+            ))}
+          </SearchInput>
+        </>
       )}
-      <Button onClick={() => handleSearch()}>Search</Button>
+      <SearchButton onClick={() => handleSearch()}>Search</SearchButton>
       <Button onClick={() => handleClear()}>Clear</Button>
-    </div>
+    </SearchBarContainer>
   );
 };
 

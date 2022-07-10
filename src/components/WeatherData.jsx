@@ -7,28 +7,40 @@ const WeatherValues = styled.div`
   flex-wrap: no-wrap;
 `;
 
+const WeatherDataContainer = styled.div`
+  padding: 30px;
+`;
+
+const WeatherPropertyName = styled.h3`
+  color: #777777;
+`;
+
+const WeatherPropertyNameContainer = styled.div`
+  margin-right: 10px;
+`;
+
 const WeatherData = ({ weatherData }) => {
   const { dt, humidity, tempMin, tempMax, weatherDescription, weatherMain, cityName, countryCode } =
     weatherData;
   return (
-    <div>
-      <h3>{`${cityName}, ${countryCode}`}:</h3>
+    <WeatherDataContainer>
+      <WeatherPropertyName>{`${cityName}, ${countryCode}`}:</WeatherPropertyName>
       <h1>{weatherMain}</h1>
       <WeatherValues>
+        <WeatherPropertyNameContainer>
+          <WeatherPropertyName>Description:</WeatherPropertyName>
+          <WeatherPropertyName>Temperature:</WeatherPropertyName>
+          <WeatherPropertyName>Humidity:</WeatherPropertyName>
+          <WeatherPropertyName>Time:</WeatherPropertyName>
+        </WeatherPropertyNameContainer>
         <div>
-          <h2>Description:</h2>
-          <h2>Temperature:</h2>
-          <h2>Humidity:</h2>
-          <h2>Time:</h2>
-        </div>
-        <div>
-          <h2>{weatherDescription}</h2>
-          <h2>{`${tempMin}c ~ ${tempMax}c`}:</h2>
-          <h2>{`${humidity}%`}</h2>
-          <h2>{moment.unix(dt).format('YYYY-MM-DD hh:mm A')}</h2>
+          <h3>{weatherDescription}</h3>
+          <h3>{`${tempMin}c ~ ${tempMax}c`}:</h3>
+          <h3>{`${humidity}%`}</h3>
+          <h3>{moment.unix(dt).format('YYYY-MM-DD hh:mm A')}</h3>
         </div>
       </WeatherValues>
-    </div>
+    </WeatherDataContainer>
   );
 };
 WeatherData.propTypes = {
