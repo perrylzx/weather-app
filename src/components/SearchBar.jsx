@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Select, Button } from 'antd';
 import 'antd/dist/antd.css';
 import { useState } from 'react';
@@ -22,14 +21,23 @@ const SearchWeather = ({ setWeatherData }) => {
       get(jsonRes, ['dt'])
     ];
 
-    return { tempMin, tempMax, humidity, weatherMain, weatherDescription, dt };
+    return {
+      tempMin,
+      tempMax,
+      humidity,
+      weatherMain,
+      weatherDescription,
+      dt,
+      cityName,
+      countryCode
+    };
   };
 
   const handleSearch = async () => {
     const xhttp = new XMLHttpRequest();
     xhttp.open(
       'GET',
-      `https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=a3b10d1cfb3ae8e9d0e4579440228ef4`,
+      `https://api.openweathermap.org/data/2.5/weather?q=${cityName},${countryCode}&appid=a3b10d1cfb3ae8e9d0e4579440228ef4&units=metric`,
       true
     );
     xhttp.addEventListener('load', (e) => {
