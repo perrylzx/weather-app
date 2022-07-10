@@ -8,7 +8,6 @@ const WeatherValues = styled.div`
 `;
 
 const WeatherData = ({ weatherData }) => {
-  console.log({ weatherData });
   const { dt, humidity, tempMin, tempMax, weatherDescription, weatherMain, cityName, countryCode } =
     weatherData;
   return (
@@ -26,7 +25,7 @@ const WeatherData = ({ weatherData }) => {
           <h2>{weatherDescription}</h2>
           <h2>{`${tempMin}c ~ ${tempMax}c`}:</h2>
           <h2>{`${humidity}%`}</h2>
-          <h2>{moment.unix(dt).format('YYYY-MM-DD HH:mm A')}</h2>
+          <h2>{moment.unix(dt).format('YYYY-MM-DD hh:mm A')}</h2>
         </div>
       </WeatherValues>
     </div>

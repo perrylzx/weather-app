@@ -3,35 +3,14 @@ import 'antd/dist/antd.css';
 import { useState } from 'react';
 import iso from '../iso-3166-2.json';
 import PropTypes from 'prop-types';
-import { map, get } from 'lodash';
+import { map } from 'lodash';
+import { parseWeatherData } from '../common';
 
 const { Option } = Select;
 
-const SearchWeather = ({ setWeatherData }) => {
+const SearchWeather = ({ setWeatherData, searchHistory, setSearchHistory }) => {
   const [countryCode, setCountryCode] = useState(null);
   const [cityName, setCityName] = useState(null);
-
-  const parseWeatherData = (jsonRes) => {
-    const [tempMin, tempMax, humidity, weatherMain, weatherDescription, dt] = [
-      get(jsonRes, ['main', 'temp_min']),
-      get(jsonRes, ['main', 'temp_max']),
-      get(jsonRes, ['main', 'humidity']),
-      get(jsonRes, ['weather', '0', 'main']),
-      get(jsonRes, ['weather', '0', 'description']),
-      get(jsonRes, ['dt'])
-    ];
-
-    return {
-      tempMin,
-      tempMax,
-      humidity,
-      weatherMain,
-      weatherDescription,
-      dt,
-      cityName,
-      countryCode
-    };
-  };
 
   const handleSearch = async () => {
     const xhttp = new XMLHttpRequest();
@@ -42,8 +21,16 @@ const SearchWeather = ({ setWeatherData }) => {
     );
     xhttp.addEventListener('load', (e) => {
       const jsonRes = JSON.parse(e.target.response);
-      const parsedWeatherData = parseWeatherData(jsonRes);
+      const parsedWeatherData = parseWeatherData(jsonRes, cityName, countryCode);
       setWeatherData(parsedWeatherData);
+      setSearchHistory([
+        ...searchHistory,
+        {
+          cityName: parsedWeatherData.cityName,
+          countryCode: parsedWeatherData.countryCode,
+          time: parsedWeatherData.dt
+        }
+      ]);
     });
     xhttp.send();
   };
@@ -60,6 +47,7 @@ const SearchWeather = ({ setWeatherData }) => {
         showSearch
         onChange={(value) => {
           setCountryCode(value);
+          setCityName(null);
         }}
         placeholder="Country Code">
         {Object.keys(iso).map((countryCode) => {
@@ -92,7 +80,9 @@ const SearchWeather = ({ setWeatherData }) => {
 };
 
 SearchWeather.propTypes = {
-  setWeatherData: PropTypes.func
+  setWeatherData: PropTypes.func,
+  searchHistory: PropTypes.array,
+  setSearchHistory: PropTypes.func
 };
 
 export default SearchWeather;
